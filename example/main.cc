@@ -110,7 +110,22 @@ namespace {
 
 
 
-int main() {
+int main(int argc, char *argv[]) {
+  if (argc > 1) {
+    // check for leaks
+
+    gf::Random random;
+    auto space = makeSpace(random);
+
+    for (int i = 0; i < 15 * 60; ++i) {
+      space.update(gf::seconds(1.0f / 60.0f));
+    }
+
+    space.disposeChildren();
+    space.dispose();
+    return 0;
+  }
+
   static constexpr gf::Vector2i ScreenSize(1280, 720);
   static constexpr gf::Vector2f ViewSize(1024, 768);
   static constexpr gf::Vector2f ViewCenter(0.0f, 0.0f);
@@ -211,6 +226,9 @@ int main() {
 
     actions.reset();
   }
+
+  space.disposeChildren();
+  space.dispose();
 
   return 0;
 
