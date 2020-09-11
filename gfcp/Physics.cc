@@ -5,10 +5,144 @@
 #include <gf/Color.h>
 
 namespace gfcp {
+  /*
+   * Arbiter
+   */
 
-//       cpBodyFree(obj);
-//       cpShapeFree(obj);
-//       cpSpaceFree(obj);
+  float Arbiter::getRestitution() const {
+    return cpArbiterGetRestitution(m_handle);
+  }
+
+  void Arbiter::setRestitution(float restitution) {
+    cpArbiterSetRestitution(m_handle, restitution);
+  }
+
+  float Arbiter::getFriction() const {
+    return cpArbiterGetFriction(m_handle);
+  }
+
+  void Arbiter::setFriction(float friction) {
+    cpArbiterSetFriction(m_handle, friction);
+  }
+
+  gf::Vector2f Arbiter::getSurfaceVelocity() {
+    auto velocity = cpArbiterGetSurfaceVelocity(m_handle);
+    return gf::vec(velocity.x, velocity.y);
+  }
+
+  void Arbiter::setSurfaceVelocity(gf::Vector2f velocity) {
+    cpArbiterSetSurfaceVelocity(m_handle, cpv(velocity.x, velocity.y));
+  }
+
+  gf::Vector2f Arbiter::computeTotalImpulse() const {
+    auto impulse = cpArbiterTotalImpulse(m_handle);
+    return gf::vec(impulse.x, impulse.y);
+  }
+
+  float Arbiter::computeTotalKineticEnergy() const {
+    return cpArbiterTotalKE(m_handle);
+  }
+
+  bool Arbiter::ignore() {
+    return cpArbiterIgnore(m_handle) == cpTrue;
+  }
+
+  std::pair<Shape, Shape> Arbiter::getShapes() const {
+    cpShape * a;
+    cpShape * b;
+    cpArbiterGetShapes(m_handle, &a, &b);
+    return std::make_pair(Shape(a), Shape(b));
+  }
+
+  std::pair<Body, Body> Arbiter::getBodies() const {
+    cpBody * a;
+    cpBody * b;
+    cpArbiterGetBodies(m_handle, &a, &b);
+    return std::make_pair(Body(a), Body(b));
+  }
+
+  bool Arbiter::isFirstContact() const {
+    return cpArbiterIsFirstContact(m_handle) == cpTrue;
+  }
+
+  bool Arbiter::isRemoval() const {
+    return cpArbiterIsRemoval(m_handle) == cpTrue;
+  }
+
+  int Arbiter::getCount() const {
+    return cpArbiterGetCount(m_handle);
+  }
+
+  gf::Vector2f Arbiter::getNormal() const {
+    auto normal = cpArbiterGetNormal(m_handle);
+    return gf::vec(normal.x, normal.y);
+  }
+
+  gf::Vector2f Arbiter::getPointA(int i) const {
+    auto a = cpArbiterGetPointA(m_handle, i);
+    return gf::vec(a.x, a.y);
+  }
+
+  gf::Vector2f Arbiter::getPointB(int i) const {
+    auto b = cpArbiterGetPointB(m_handle, i);
+    return gf::vec(b.x, b.y);
+  }
+
+  float Arbiter::getDepth(int i) const {
+    return cpArbiterGetDepth(m_handle, i);
+  }
+
+  bool Arbiter::callWildcardBeginA(Space space) {
+    return cpArbiterCallWildcardBeginA(m_handle, space.m_handle);
+  }
+
+  bool Arbiter::callWildcardBeginB(Space space) {
+    return cpArbiterCallWildcardBeginB(m_handle, space.m_handle);
+  }
+
+  bool Arbiter::callWildcardPreSolveA(Space space) {
+    return cpArbiterCallWildcardPreSolveA(m_handle, space.m_handle);
+  }
+
+  bool Arbiter::callWildcardPreSolveB(Space space) {
+    return cpArbiterCallWildcardPreSolveB(m_handle, space.m_handle);
+  }
+
+  void Arbiter::callWildcardPostSolveA(Space space) {
+    cpArbiterCallWildcardPostSolveA(m_handle, space.m_handle);
+  }
+
+  void Arbiter::callWildcardPostSolveB(Space space) {
+    cpArbiterCallWildcardPostSolveB(m_handle, space.m_handle);
+  }
+
+  void Arbiter::callWildcardSeparateA(Space space) {
+    cpArbiterCallWildcardSeparateA(m_handle, space.m_handle);
+  }
+
+  void Arbiter::callWildcardSeparateB(Space space) {
+    cpArbiterCallWildcardSeparateB(m_handle, space.m_handle);
+  }
+
+
+  /*
+   * CollisionHandler
+   */
+
+  bool CollisionHandler::begin(Arbiter arbiter, Space space) {
+    return true;
+  }
+
+  bool CollisionHandler::preSolve(Arbiter arbiter, Space space) {
+    return true;
+  }
+
+  void CollisionHandler::postSolve(Arbiter arbiter, Space space) {
+  }
+
+  void CollisionHandler::separate(Arbiter arbiter, Space space) {
+  }
+
 
   /*
    * SpaceDebug
@@ -166,6 +300,47 @@ namespace gfcp {
 
   bool Space::isLocked() {
     return cpSpaceIsLocked(m_handle) == cpTrue;
+  }
+
+  namespace {
+
+    cpBool myCollisionBeginFunc(cpArbiter *arb, cpSpace *space, cpDataPointer userData) {
+      auto handler = static_cast<CollisionHandler*>(userData);
+      return handler->begin(Arbiter(arb), Space(space)) ? cpTrue : cpFalse;
+    }
+
+    cpBool myCollisionPreSolveFunc(cpArbiter *arb, cpSpace *space, cpDataPointer userData) {
+      auto handler = static_cast<CollisionHandler*>(userData);
+      return handler->preSolve(Arbiter(arb), Space(space)) ? cpTrue : cpFalse;
+    }
+
+    void myCollisionPostSolveFunc(cpArbiter *arb, cpSpace *space, cpDataPointer userData) {
+      auto handler = static_cast<CollisionHandler*>(userData);
+      handler->postSolve(Arbiter(arb), Space(space));
+    }
+
+    void myCollisionSeparateFunc(cpArbiter *arb, cpSpace *space, cpDataPointer userData) {
+      auto handler = static_cast<CollisionHandler*>(userData);
+      handler->separate(Arbiter(arb), Space(space));
+    }
+
+  }
+
+  void Space::setDefaultCollisionHandler(CollisionHandler& handler) {
+    auto raw = cpSpaceAddDefaultCollisionHandler(m_handle);
+    raw->beginFunc = myCollisionBeginFunc;
+    raw->preSolveFunc = myCollisionPreSolveFunc;
+    raw->postSolveFunc = myCollisionPostSolveFunc;
+    raw->separateFunc = myCollisionSeparateFunc;
+    raw->userData = &handler;
+  }
+
+  void Space::setCollisionHandler(CollisionHandler& handler, uintptr_t a, uintptr_t b) {
+
+  }
+
+  void Space::setWildcardHandler(CollisionHandler& handler, uintptr_t type) {
+
   }
 
   void Space::addShape(Shape& shape) {

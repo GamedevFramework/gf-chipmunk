@@ -19,6 +19,7 @@ namespace gfcp {
   class Body;
 //   class Constraint;
   class Shape;
+  class Space;
 
   namespace details {
 
@@ -72,12 +73,67 @@ namespace gfcp {
 
   }
 
-//   class Arbiter {
-//   public:
-//
-//   private:
-//     details::PhysicsHandle<cpArbiter> m_handle;
-//   };
+  class Arbiter {
+  public:
+    Arbiter(cpArbiter * obj)
+    : m_handle(obj)
+    {
+    }
+
+    float getRestitution() const;
+    void setRestitution(float restitution);
+
+    float getFriction() const;
+    void setFriction(float friction);
+
+    gf::Vector2f getSurfaceVelocity();
+    void setSurfaceVelocity(gf::Vector2f velocity);
+
+    // TODO: userdata
+
+    gf::Vector2f computeTotalImpulse() const;
+    float computeTotalKineticEnergy() const;
+
+    bool ignore();
+
+    std::pair<Shape, Shape> getShapes() const;
+    std::pair<Body, Body> getBodies() const;
+
+    // TODO: contact point set
+
+    bool isFirstContact() const;
+    bool isRemoval() const;
+
+    int getCount() const;
+    gf::Vector2f getNormal() const;
+    gf::Vector2f getPointA(int i) const;
+    gf::Vector2f getPointB(int i) const;
+    float getDepth(int i) const;
+
+    bool callWildcardBeginA(Space space);
+    bool callWildcardBeginB(Space space);
+
+    bool callWildcardPreSolveA(Space space);
+    bool callWildcardPreSolveB(Space space);
+
+    void callWildcardPostSolveA(Space space);
+    void callWildcardPostSolveB(Space space);
+
+    void callWildcardSeparateA(Space space);
+    void callWildcardSeparateB(Space space);
+
+  private:
+    details::PhysicsHandle<cpArbiter> m_handle;
+  };
+
+  class CollisionHandler {
+  public:
+    virtual ~CollisionHandler() = default;
+    virtual bool begin(Arbiter arbiter, Space space);
+    virtual bool preSolve(Arbiter arbiter, Space space);
+    virtual void postSolve(Arbiter arbiter, Space space);
+    virtual void separate(Arbiter arbiter, Space space);
+  };
 
   class SpaceDebug {
   public:
@@ -133,7 +189,9 @@ namespace gfcp {
 
     bool isLocked();
 
-    // TODO: collision handlers
+    void setDefaultCollisionHandler(CollisionHandler& handler);
+    void setCollisionHandler(CollisionHandler& handler, uintptr_t a, uintptr_t b);
+    void setWildcardHandler(CollisionHandler& handler, uintptr_t type);
 
     void addShape(Shape& shape);
     void addBody(Body& body);
@@ -166,7 +224,7 @@ namespace gfcp {
 
     void update(gf::Time time) override;
   private:
-
+    friend class Arbiter;
     friend class Body;
     friend class Shape;
 

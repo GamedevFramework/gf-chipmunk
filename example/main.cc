@@ -74,7 +74,7 @@ namespace {
 
   gfcp::Space makeSpace(gf::Random& random) {
     gfcp::Space space;
-//     space.setIterations(1);
+    space.setIterations(4);
     space.useSpatialHash(2.0, 10000);
 
     for (int y = 0; y < ImageHeight; ++y) {
@@ -160,6 +160,10 @@ int main(int argc, char *argv[]) {
   fullscreenAction.addKeycodeKeyControl(gf::Keycode::F);
   actions.addAction(fullscreenAction);
 
+  gf::Action restartAction("Restart");
+  restartAction.addKeycodeKeyControl(gf::Keycode::Return);
+  actions.addAction(restartAction);
+
   // models
 
   gf::ModelContainer models;
@@ -200,6 +204,11 @@ int main(int argc, char *argv[]) {
       window.toggleFullscreen();
     }
 
+    if (restartAction.isActive()) {
+      space.disposeChildren();
+      space.dispose();
+      space = makeSpace(random);
+    }
 
     // 2. update
 
