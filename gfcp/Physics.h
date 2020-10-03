@@ -144,23 +144,23 @@ namespace gfcp {
 
     void addShape(Shape shape);
     void addBody(Body body);
-    // void addConstraint(Constraint constraint);
+    void addConstraint(Constraint constraint);
 
     void removeShape(Shape shape);
     void removeBody(Body body);
-    // void removeConstraint(Constraint constraint);
+    void removeConstraint(Constraint constraint);
 
     bool containsShape(Shape shape);
     bool containsBody(Body body);
-//     bool containsConstraint(Constraint constraint);
+    bool containsConstraint(Constraint constraint);
 
     // TODO: post-step callback
 
     // TODO: queries
 
     void eachBody(std::function<void(Body)> func);
-//     void eachShape(std::function<void(Shape)> func);
-//     void eachConstraint(std::function<void(Constraint)> func);
+    void eachShape(std::function<void(Shape)> func);
+    void eachConstraint(std::function<void(Constraint)> func);
 
     void reindexStatic();
     void reindexShape(Shape& shape);
@@ -174,6 +174,7 @@ namespace gfcp {
   private:
     friend class Arbiter;
     friend class Body;
+    friend class PhysicsFactory;
     friend class Shape;
 
   private:
@@ -264,11 +265,12 @@ namespace gfcp {
     float getKinematicEnergy() const;
 
     void eachShape(std::function<void(Body, Shape)> func);
-//     void eachConstraint(std::function<void(Constraint)> func);
-//     void eachArbiter(std::function<void(Arbiter)> func);
+    void eachConstraint(std::function<void(Body, Constraint)> func);
+    void eachArbiter(std::function<void(Body, Arbiter)> func);
 
   private:
     friend class Constraint;
+    friend class PhysicsFactory;
     friend class Space;
     friend class Shape;
 
@@ -409,6 +411,10 @@ namespace gfcp {
     // TODO: userdata
 
     float getImpulse();
+
+  private:
+    friend class Space;
+    friend class PhysicsFactory;
 
   protected:
     cpBody * unwrap(Body body);
@@ -572,6 +578,18 @@ namespace gfcp {
     Body makeKinematicBody();
     Body makeStaticBody();
 
+    PinJoint makePinJoint(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB);
+    SlideJoint makeSlideJoint(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB, float min, float max);
+    PivotJoint makePivotJoint(Body a, Body b, gf::Vector2f pivot);
+    PivotJoint makePivotJoint(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB);
+    GrooveJoint makeGrooveJoint(Body a, Body b, gf::Vector2f grooveA, gf::Vector2f grooveB, gf::Vector2f anchorB);
+    DampedSpring makeDampedSpring(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB, float restLength, float stiffness, float damping);
+    DampedRotarySpring makeDampedRotarySpring(Body a, Body b, float restAngle, float stiffness, float damping);
+    RotaryLimitJoint makeRotaryLimitJoint(Body a, Body b, float min, float max);
+    RatchetJoint makeRatchetJoint(Body a, Body b, float phase, float ratchet);
+    GearJoint makeGearJoint(Body a, Body b, float phase, float ratio);
+    SimpleMotor makeSimpleMotor(Body a, Body b, float rate);
+
     CircleShape makeCircleShape(Body body, float radius, gf::Vector2f offset);
     SegmentShape makeSegmentShape(Body body, gf::Vector2f a, gf::Vector2f b, float radius);
     PolygonShape makePolygonShape(Body body, gf::Span<const gf::Vector2f> verts, gf::Matrix3f transform, float radius);
@@ -580,10 +598,9 @@ namespace gfcp {
   private:
     std::vector<cpSpace*> m_spaces;
     std::vector<cpBody*> m_bodies;
+    std::vector<cpConstraint*> m_constraints;
     std::vector<cpShape*> m_shapes;
   };
-
-
 
 }
 

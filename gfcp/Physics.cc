@@ -351,12 +351,20 @@ namespace gfcp {
     cpSpaceAddBody(m_obj, body.m_obj);
   }
 
+  void Space::addConstraint(Constraint constraint) {
+    cpSpaceAddConstraint(m_obj, constraint.m_obj);
+  }
+
   void Space::removeShape(Shape shape) {
     cpSpaceRemoveShape(m_obj, shape.m_obj);
   }
 
   void Space::removeBody(Body body) {
     cpSpaceRemoveBody(m_obj, body.m_obj);
+  }
+
+  void Space::removeConstraint(Constraint constraint) {
+    cpSpaceRemoveConstraint(m_obj, constraint.m_obj);
   }
 
   bool Space::containsShape(Shape shape) {
@@ -367,6 +375,10 @@ namespace gfcp {
     return cpSpaceContainsBody(m_obj, body.m_obj) == cpTrue;
   }
 
+  bool Space::containsConstraint(Constraint constraint) {
+    return cpSpaceContainsConstraint(m_obj, constraint.m_obj) == cpTrue;
+  }
+
   namespace {
 
     void mySpaceBodyIteratorFunc(cpBody * body, void * data) {
@@ -374,10 +386,28 @@ namespace gfcp {
       (*func)(Body(body));
     }
 
+    void mySpaceShapeIteratorFunc(cpShape * shape, void * data) {
+      auto func = static_cast<std::function<void(Shape)>*>(data);
+      (*func)(Shape(shape));
+    }
+
+    void mySpaceConstraintIteratorFunc(cpConstraint *constraint, void *data) {
+      auto func = static_cast<std::function<void(Constraint)>*>(data);
+      (*func)(Constraint(constraint));
+    }
+
   }
 
   void Space::eachBody(std::function<void(Body)> func) {
     cpSpaceEachBody(m_obj, mySpaceBodyIteratorFunc, &func);
+  }
+
+  void Space::eachShape(std::function<void(Shape)> func) {
+    cpSpaceEachShape(m_obj, mySpaceShapeIteratorFunc, &func);
+  }
+
+  void Space::eachConstraint(std::function<void(Constraint)> func) {
+    cpSpaceEachConstraint(m_obj, mySpaceConstraintIteratorFunc, &func);
   }
 
   void Space::reindexStatic() {
@@ -642,14 +672,32 @@ namespace gfcp {
   }
 
   namespace {
-    void myBodyShapeIterator(cpBody *body, cpShape *shape, void *data) {
+    void myBodyShapeIterator(cpBody * body, cpShape * shape, void * data) {
       auto func = static_cast<std::function<void(Body, Shape)>*>(data);
       (*func)(Body(body), Shape(shape));
+    }
+
+    void myBodyConstraintIteratorFunc(cpBody * body, cpConstraint * constraint, void * data) {
+      auto func = static_cast<std::function<void(Body, Constraint)>*>(data);
+      (*func)(Body(body), Constraint(constraint));
+    }
+
+    void myBodyArbiterIteratorFunc(cpBody * body, cpArbiter * arbiter, void * data) {
+      auto func = static_cast<std::function<void(Body, Arbiter)>*>(data);
+      (*func)(Body(body), Arbiter(arbiter));
     }
   }
 
   void Body::eachShape(std::function<void(Body, Shape)> func) {
     cpBodyEachShape(m_obj, myBodyShapeIterator, &func);
+  }
+
+  void Body::eachConstraint(std::function<void(Body, Constraint)> func) {
+    cpBodyEachConstraint(m_obj, myBodyConstraintIteratorFunc, &func);
+  }
+
+  void Body::eachArbiter(std::function<void(Body, Arbiter)> func) {
+    cpBodyEachArbiter(m_obj, myBodyArbiterIteratorFunc, &func);
   }
 
   /*
@@ -1252,6 +1300,10 @@ namespace gfcp {
       cpShapeFree(ptr);
     }
 
+    for (auto ptr : m_constraints) {
+      cpConstraintFree(ptr);
+    }
+
     for (auto ptr : m_bodies) {
       cpBodyFree(ptr);
     }
@@ -1262,27 +1314,93 @@ namespace gfcp {
   }
 
   Space PhysicsFactory::makeSpace() {
-    auto obj = cpSpaceNew();
-    m_spaces.push_back(obj);
-    return Space(obj);
+    Space space;
+    m_spaces.push_back(space.m_obj);
+    return space;
   }
 
   Body PhysicsFactory::makeBody(float mass, float moment) {
-    auto obj = cpBodyNew(mass, moment);
-    m_bodies.push_back(obj);
-    return Body(obj);
+    Body body(mass, moment);
+    m_bodies.push_back(body.m_obj);
+    return body;
   }
 
   Body PhysicsFactory::makeKinematicBody() {
-    auto obj = cpBodyNewKinematic();
-    m_bodies.push_back(obj);
-    return Body(obj);
+    Body body = Body::makeKinematic();
+    m_bodies.push_back(body.m_obj);
+    return body;
   }
 
   Body PhysicsFactory::makeStaticBody() {
-    auto obj = cpBodyNewStatic();
-    m_bodies.push_back(obj);
-    return Body(obj);
+    Body body = Body::makeStatic();
+    m_bodies.push_back(body.m_obj);
+    return body;
+  }
+
+  PinJoint PhysicsFactory::makePinJoint(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB) {
+    PinJoint constraint(a, b, anchorA, anchorB);
+    m_constraints.push_back(constraint.m_obj);
+    return constraint;
+  }
+
+  SlideJoint PhysicsFactory::makeSlideJoint(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB, float min, float max) {
+    SlideJoint constraint(a, b, anchorA, anchorB, min, max);
+    m_constraints.push_back(constraint.m_obj);
+    return constraint;
+  }
+
+  PivotJoint PhysicsFactory::makePivotJoint(Body a, Body b, gf::Vector2f pivot) {
+    PivotJoint constraint(a, b, pivot);
+    m_constraints.push_back(constraint.m_obj);
+    return constraint;
+  }
+
+  PivotJoint PhysicsFactory::makePivotJoint(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB) {
+    PivotJoint constraint(a, b, anchorA, anchorB);
+    m_constraints.push_back(constraint.m_obj);
+    return constraint;
+  }
+
+  GrooveJoint PhysicsFactory::makeGrooveJoint(Body a, Body b, gf::Vector2f grooveA, gf::Vector2f grooveB, gf::Vector2f anchorB) {
+    GrooveJoint constraint(a, b, grooveA, grooveB, anchorB);
+    m_constraints.push_back(constraint.m_obj);
+    return constraint;
+  }
+
+  DampedSpring PhysicsFactory::makeDampedSpring(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB, float restLength, float stiffness, float damping) {
+    DampedSpring constraint(a, b, anchorA, anchorB, restLength, stiffness, damping);
+    m_constraints.push_back(constraint.m_obj);
+    return constraint;
+  }
+
+  DampedRotarySpring PhysicsFactory::makeDampedRotarySpring(Body a, Body b, float restAngle, float stiffness, float damping) {
+    DampedRotarySpring constraint(a, b, restAngle, stiffness, damping);
+    m_constraints.push_back(constraint.m_obj);
+    return constraint;
+  }
+
+  RotaryLimitJoint PhysicsFactory::makeRotaryLimitJoint(Body a, Body b, float min, float max) {
+    RotaryLimitJoint constraint(a, b, min, max);
+    m_constraints.push_back(constraint.m_obj);
+    return constraint;
+  }
+
+  RatchetJoint PhysicsFactory::makeRatchetJoint(Body a, Body b, float phase, float ratchet) {
+    RatchetJoint constraint(a, b, phase, ratchet);
+    m_constraints.push_back(constraint.m_obj);
+    return constraint;
+  }
+
+  GearJoint PhysicsFactory::makeGearJoint(Body a, Body b, float phase, float ratio) {
+    GearJoint constraint(a, b, phase, ratio);
+    m_constraints.push_back(constraint.m_obj);
+    return constraint;
+  }
+
+  SimpleMotor PhysicsFactory::makeSimpleMotor(Body a, Body b, float rate) {
+    SimpleMotor constraint(a, b, rate);
+    m_constraints.push_back(constraint.m_obj);
+    return constraint;
   }
 
   CircleShape PhysicsFactory::makeCircleShape(Body body, float radius, gf::Vector2f offset) {
