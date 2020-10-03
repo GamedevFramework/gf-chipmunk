@@ -12,71 +12,20 @@
 
 struct cpArbiter;
 struct cpBody;
+struct cpConstraint;
 struct cpShape;
 struct cpSpace;
 
 namespace gfcp {
   class Body;
-//   class Constraint;
+  class Constraint;
   class Shape;
   class Space;
-
-  namespace details {
-
-    template<typename T>
-    class PhysicsHandle {
-    public:
-      PhysicsHandle(T * obj)
-      : m_obj(obj)
-      {
-      }
-
-      PhysicsHandle(const PhysicsHandle&) = delete;
-
-      PhysicsHandle(PhysicsHandle&& other) noexcept
-      : m_obj(std::exchange(other.m_obj, nullptr))
-      {
-      }
-
-      ~PhysicsHandle() = default;
-
-      PhysicsHandle& operator=(const PhysicsHandle&) = delete;
-
-      PhysicsHandle& operator=(PhysicsHandle&& other) {
-        std::swap(m_obj, other.m_obj);
-        return *this;
-      }
-
-      void clear() {
-        m_obj = nullptr;
-      }
-
-      T * getObject() noexcept {
-        return m_obj;
-      }
-
-      const T * getObject() const noexcept {
-        return m_obj;
-      }
-
-      operator T * () noexcept {
-        return m_obj;
-      }
-
-      operator const T * () const noexcept {
-        return m_obj;
-      }
-
-    private:
-      T * m_obj;
-    };
-
-  }
 
   class Arbiter {
   public:
     Arbiter(cpArbiter * obj)
-    : m_handle(obj)
+    : m_obj(obj)
     {
     }
 
@@ -123,7 +72,7 @@ namespace gfcp {
     void callWildcardSeparateB(Space space);
 
   private:
-    details::PhysicsHandle<cpArbiter> m_handle;
+    cpArbiter * m_obj;
   };
 
   class CollisionHandler {
@@ -152,7 +101,7 @@ namespace gfcp {
 
     explicit
     Space(cpSpace *obj)
-    : m_handle(obj)
+    : m_obj(obj)
     {
     }
 
@@ -193,18 +142,17 @@ namespace gfcp {
     void setCollisionHandler(CollisionHandler& handler, uintptr_t a, uintptr_t b);
     void setWildcardHandler(CollisionHandler& handler, uintptr_t type);
 
-    void addShape(Shape& shape);
-    void addBody(Body& body);
-    void addBody(Body&& body);
-    // void addConstraint(Constraint& constraint);
+    void addShape(Shape shape);
+    void addBody(Body body);
+    // void addConstraint(Constraint constraint);
 
-    void removeShape(Shape& shape);
-    void removeBody(Body& body);
-    // void removeConstraint(Constraint& constraint);
+    void removeShape(Shape shape);
+    void removeBody(Body body);
+    // void removeConstraint(Constraint constraint);
 
-    bool containsShape(Shape& shape);
-    bool containsBody(Body& body);
-//     bool containsConstraint(Constraint& constraint);
+    bool containsShape(Shape shape);
+    bool containsBody(Body body);
+//     bool containsConstraint(Constraint constraint);
 
     // TODO: post-step callback
 
@@ -229,7 +177,7 @@ namespace gfcp {
     friend class Shape;
 
   private:
-    details::PhysicsHandle<cpSpace> m_handle;
+    cpSpace * m_obj;
   };
 
 
@@ -243,7 +191,7 @@ namespace gfcp {
   public:
     explicit
     Body(cpBody * obj)
-    : m_handle(obj)
+    : m_obj(obj)
     {
     }
 
@@ -255,10 +203,10 @@ namespace gfcp {
     void dispose();
 
     void activate();
-    void activateStatic(Shape& filter);
+    void activateStatic(Shape filter);
 
     void sleep();
-    void sleepWithGroup(Body& group);
+    void sleepWithGroup(Body group);
     bool isSleeping() const;
 
     BodyType getType();
@@ -320,14 +268,11 @@ namespace gfcp {
 //     void eachArbiter(std::function<void(Arbiter)> func);
 
   private:
+    friend class Constraint;
     friend class Space;
     friend class Shape;
 
-    friend class CircleShape;
-    friend class SegmentShape;
-    friend class PolygonShape;
-
-    details::PhysicsHandle<cpBody> m_handle;
+    cpBody * m_obj;
   };
 
   struct ShapeFilter {
@@ -343,7 +288,7 @@ namespace gfcp {
   public:
     explicit
     Shape(cpShape * obj)
-    : m_handle(obj)
+    : m_obj(obj)
     {
     }
 
@@ -357,7 +302,7 @@ namespace gfcp {
 
     Space getSpace() const;
     Body getBody() const;
-    void setBody(Body& body);
+    void setBody(Body body);
 
     float getMass();
     void setMass(float mass);
@@ -397,17 +342,15 @@ namespace gfcp {
     friend class PhysicsFactory;
 
   protected:
-    details::PhysicsHandle<cpShape> m_handle;
+    cpBody * unwrap(Body body);
+
+  protected:
+    cpShape * m_obj;
   };
 
   class CircleShape : public Shape {
   public:
-    CircleShape(Body& body, float radius, gf::Vector2f offset);
-
-    CircleShape(cpShape * obj)
-    : Shape(obj)
-    {
-    }
+    CircleShape(Body body, float radius, gf::Vector2f offset);
 
     gf::Vector2f getOffset() const;
     float getRadius() const;
@@ -415,12 +358,7 @@ namespace gfcp {
 
   class SegmentShape : public Shape {
   public:
-    SegmentShape(Body& body, gf::Vector2f a, gf::Vector2f b, float radius);
-
-    SegmentShape(cpShape * obj)
-    : Shape(obj)
-    {
-    }
+    SegmentShape(Body body, gf::Vector2f a, gf::Vector2f b, float radius);
 
     void setNeighbors(gf::Vector2f prev, gf::Vector2f next);
 
@@ -432,19 +370,191 @@ namespace gfcp {
 
   class PolygonShape : public Shape {
   public:
-    PolygonShape(Body& body, gf::Span<const gf::Vector2f> verts, gf::Matrix3f transform, float radius);
-    PolygonShape(Body& body, gf::RectF box, float radius);
-
-    PolygonShape(cpShape * obj)
-    : Shape(obj)
-    {
-    }
+    PolygonShape(Body body, gf::Span<const gf::Vector2f> verts, gf::Matrix3f transform, float radius);
+    PolygonShape(Body body, gf::RectF box, float radius);
 
     std::size_t getPointCount() const;
     gf::Vector2f getPoint(std::size_t index) const;
     float getRadius() const;
   };
 
+
+  class Constraint {
+  public:
+    Constraint(cpConstraint * obj)
+    : m_obj(obj)
+    {
+    }
+
+    void dispose();
+
+    Space getSpace() const;
+    Body getBodyA() const;
+    Body getBodyB() const;
+
+    float getMaxForce() const;
+    void setMaxForce(float force);
+
+    float getErrorBias() const;
+    void setErrorBias(float bias);
+
+    float getMaxBias() const;
+    void setMaxBias(float bias);
+
+    bool getCollideBodies() const;
+    void setCollideBodies(bool collide);
+
+    // TODO: pre-solve and post-solve
+
+    // TODO: userdata
+
+    float getImpulse();
+
+  protected:
+    cpBody * unwrap(Body body);
+
+  protected:
+    cpConstraint * m_obj;
+  };
+
+  class PinJoint : public Constraint {
+  public:
+    PinJoint(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB);
+
+    gf::Vector2f getAnchorA() const;
+    void setAnchorA(gf::Vector2f anchor);
+
+    gf::Vector2f getAnchorB() const;
+    void setAnchorB(gf::Vector2f anchor);
+
+    float getDistance() const;
+    void setDistance(float distance);
+  };
+
+  class SlideJoint : public Constraint {
+  public:
+    SlideJoint(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB, float min, float max);
+
+    gf::Vector2f getAnchorA() const;
+    void setAnchorA(gf::Vector2f anchor);
+
+    gf::Vector2f getAnchorB() const;
+    void setAnchorB(gf::Vector2f anchor);
+
+    float getMin() const;
+    void setMix(float min);
+
+    float getMax() const;
+    void setMax(float max);
+  };
+
+  class PivotJoint : public Constraint {
+  public:
+    PivotJoint(Body a, Body b, gf::Vector2f pivot);
+    PivotJoint(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB);
+
+    gf::Vector2f getAnchorA() const;
+    void setAnchorA(gf::Vector2f anchor);
+
+    gf::Vector2f getAnchorB() const;
+    void setAnchorB(gf::Vector2f anchor);
+  };
+
+  class GrooveJoint : public Constraint {
+  public:
+    GrooveJoint(Body a, Body b, gf::Vector2f grooveA, gf::Vector2f grooveB, gf::Vector2f anchorB);
+
+    gf::Vector2f getGrooveA() const;
+    void setGrooveA(gf::Vector2f groove);
+
+    gf::Vector2f getGrooveB() const;
+    void setGrooveB(gf::Vector2f groove);
+
+    gf::Vector2f getAnchorB() const;
+    void setAnchorB(gf::Vector2f anchor);
+  };
+
+  class DampedSpring : public Constraint {
+  public:
+    DampedSpring(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB, float restLength, float stiffness, float damping);
+
+    gf::Vector2f getAnchorA() const;
+    void setAnchorA(gf::Vector2f anchor);
+
+    gf::Vector2f getAnchorB() const;
+    void setAnchorB(gf::Vector2f anchor);
+
+    float getRestLength() const;
+    void setRestLength(float restLength);
+
+    float getStiffness() const;
+    void setStiffness(float stiffness);
+
+    float getDamping() const;
+    void setDamping(float damping);
+
+    // TODO: spring force func
+  };
+
+  class DampedRotarySpring : public Constraint {
+  public:
+    DampedRotarySpring(Body a, Body b, float restAngle, float stiffness, float damping);
+
+    float getRestAngle() const;
+    void setRestAngle(float restAngle);
+
+    float getStiffness() const;
+    void setStiffness(float stiffness);
+
+    float getDamping() const;
+    void setDamping(float damping);
+
+    // TODO: spring torque func
+  };
+
+  class RotaryLimitJoint : public Constraint {
+  public:
+    RotaryLimitJoint(Body a, Body b, float min, float max);
+
+    float getMin() const;
+    void setMix(float min);
+
+    float getMax() const;
+    void setMax(float max);
+  };
+
+  class RatchetJoint : public Constraint {
+  public:
+    RatchetJoint(Body a, Body b, float phase, float ratchet);
+
+    float getAngle() const;
+    void setAngle(float angle);
+
+    float getPhase() const;
+    void setPhase(float phase);
+
+    float getRatchet() const;
+    void setRatchet(float ratchet);
+  };
+
+  class GearJoint : public Constraint {
+  public:
+    GearJoint(Body a, Body b, float phase, float ratio);
+
+    float getPhase() const;
+    void setPhase(float phase);
+
+    float getRatio() const;
+    void setRatio(float ratio);
+  };
+
+  class SimpleMotor : public Constraint {
+  public:
+    SimpleMotor(Body a, Body b, float rate);
+
+    float getRate() const;
+    void setRate(float rate);
+  };
 
   class PhysicsFactory {
   public:
@@ -462,10 +572,10 @@ namespace gfcp {
     Body makeKinematicBody();
     Body makeStaticBody();
 
-    CircleShape makeCircleShape(Body& body, float radius, gf::Vector2f offset);
-    SegmentShape makeSegmentShape(Body& body, gf::Vector2f a, gf::Vector2f b, float radius);
-    PolygonShape makePolygonShape(Body& body, gf::Span<const gf::Vector2f> verts, gf::Matrix3f transform, float radius);
-    PolygonShape makeBoxShape(Body& body, gf::RectF box, float radius);
+    CircleShape makeCircleShape(Body body, float radius, gf::Vector2f offset);
+    SegmentShape makeSegmentShape(Body body, gf::Vector2f a, gf::Vector2f b, float radius);
+    PolygonShape makePolygonShape(Body body, gf::Span<const gf::Vector2f> verts, gf::Matrix3f transform, float radius);
+    PolygonShape makeBoxShape(Body body, gf::RectF box, float radius);
 
   private:
     std::vector<cpSpace*> m_spaces;

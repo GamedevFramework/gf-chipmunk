@@ -10,118 +10,118 @@ namespace gfcp {
    */
 
   float Arbiter::getRestitution() const {
-    return cpArbiterGetRestitution(m_handle);
+    return cpArbiterGetRestitution(m_obj);
   }
 
   void Arbiter::setRestitution(float restitution) {
-    cpArbiterSetRestitution(m_handle, restitution);
+    cpArbiterSetRestitution(m_obj, restitution);
   }
 
   float Arbiter::getFriction() const {
-    return cpArbiterGetFriction(m_handle);
+    return cpArbiterGetFriction(m_obj);
   }
 
   void Arbiter::setFriction(float friction) {
-    cpArbiterSetFriction(m_handle, friction);
+    cpArbiterSetFriction(m_obj, friction);
   }
 
   gf::Vector2f Arbiter::getSurfaceVelocity() {
-    auto velocity = cpArbiterGetSurfaceVelocity(m_handle);
+    auto velocity = cpArbiterGetSurfaceVelocity(m_obj);
     return gf::vec(velocity.x, velocity.y);
   }
 
   void Arbiter::setSurfaceVelocity(gf::Vector2f velocity) {
-    cpArbiterSetSurfaceVelocity(m_handle, cpv(velocity.x, velocity.y));
+    cpArbiterSetSurfaceVelocity(m_obj, cpv(velocity.x, velocity.y));
   }
 
   gf::Vector2f Arbiter::computeTotalImpulse() const {
-    auto impulse = cpArbiterTotalImpulse(m_handle);
+    auto impulse = cpArbiterTotalImpulse(m_obj);
     return gf::vec(impulse.x, impulse.y);
   }
 
   float Arbiter::computeTotalKineticEnergy() const {
-    return cpArbiterTotalKE(m_handle);
+    return cpArbiterTotalKE(m_obj);
   }
 
   bool Arbiter::ignore() {
-    return cpArbiterIgnore(m_handle) == cpTrue;
+    return cpArbiterIgnore(m_obj) == cpTrue;
   }
 
   std::pair<Shape, Shape> Arbiter::getShapes() const {
     cpShape * a;
     cpShape * b;
-    cpArbiterGetShapes(m_handle, &a, &b);
+    cpArbiterGetShapes(m_obj, &a, &b);
     return std::make_pair(Shape(a), Shape(b));
   }
 
   std::pair<Body, Body> Arbiter::getBodies() const {
     cpBody * a;
     cpBody * b;
-    cpArbiterGetBodies(m_handle, &a, &b);
+    cpArbiterGetBodies(m_obj, &a, &b);
     return std::make_pair(Body(a), Body(b));
   }
 
   bool Arbiter::isFirstContact() const {
-    return cpArbiterIsFirstContact(m_handle) == cpTrue;
+    return cpArbiterIsFirstContact(m_obj) == cpTrue;
   }
 
   bool Arbiter::isRemoval() const {
-    return cpArbiterIsRemoval(m_handle) == cpTrue;
+    return cpArbiterIsRemoval(m_obj) == cpTrue;
   }
 
   int Arbiter::getCount() const {
-    return cpArbiterGetCount(m_handle);
+    return cpArbiterGetCount(m_obj);
   }
 
   gf::Vector2f Arbiter::getNormal() const {
-    auto normal = cpArbiterGetNormal(m_handle);
+    auto normal = cpArbiterGetNormal(m_obj);
     return gf::vec(normal.x, normal.y);
   }
 
   gf::Vector2f Arbiter::getPointA(int i) const {
-    auto a = cpArbiterGetPointA(m_handle, i);
+    auto a = cpArbiterGetPointA(m_obj, i);
     return gf::vec(a.x, a.y);
   }
 
   gf::Vector2f Arbiter::getPointB(int i) const {
-    auto b = cpArbiterGetPointB(m_handle, i);
+    auto b = cpArbiterGetPointB(m_obj, i);
     return gf::vec(b.x, b.y);
   }
 
   float Arbiter::getDepth(int i) const {
-    return cpArbiterGetDepth(m_handle, i);
+    return cpArbiterGetDepth(m_obj, i);
   }
 
   bool Arbiter::callWildcardBeginA(Space space) {
-    return cpArbiterCallWildcardBeginA(m_handle, space.m_handle);
+    return cpArbiterCallWildcardBeginA(m_obj, space.m_obj);
   }
 
   bool Arbiter::callWildcardBeginB(Space space) {
-    return cpArbiterCallWildcardBeginB(m_handle, space.m_handle);
+    return cpArbiterCallWildcardBeginB(m_obj, space.m_obj);
   }
 
   bool Arbiter::callWildcardPreSolveA(Space space) {
-    return cpArbiterCallWildcardPreSolveA(m_handle, space.m_handle);
+    return cpArbiterCallWildcardPreSolveA(m_obj, space.m_obj);
   }
 
   bool Arbiter::callWildcardPreSolveB(Space space) {
-    return cpArbiterCallWildcardPreSolveB(m_handle, space.m_handle);
+    return cpArbiterCallWildcardPreSolveB(m_obj, space.m_obj);
   }
 
   void Arbiter::callWildcardPostSolveA(Space space) {
-    cpArbiterCallWildcardPostSolveA(m_handle, space.m_handle);
+    cpArbiterCallWildcardPostSolveA(m_obj, space.m_obj);
   }
 
   void Arbiter::callWildcardPostSolveB(Space space) {
-    cpArbiterCallWildcardPostSolveB(m_handle, space.m_handle);
+    cpArbiterCallWildcardPostSolveB(m_obj, space.m_obj);
   }
 
   void Arbiter::callWildcardSeparateA(Space space) {
-    cpArbiterCallWildcardSeparateA(m_handle, space.m_handle);
+    cpArbiterCallWildcardSeparateA(m_obj, space.m_obj);
   }
 
   void Arbiter::callWildcardSeparateB(Space space) {
-    cpArbiterCallWildcardSeparateB(m_handle, space.m_handle);
+    cpArbiterCallWildcardSeparateB(m_obj, space.m_obj);
   }
 
 
@@ -172,13 +172,13 @@ namespace gfcp {
    */
 
   Space::Space()
-  : m_handle(cpSpaceNew())
+  : m_obj(cpSpaceNew())
   {
   }
 
   void Space::dispose() {
-    cpSpaceFree(m_handle);
-    m_handle.clear();
+    cpSpaceFree(m_obj);
+    m_obj = nullptr;
   }
 
   namespace {
@@ -223,83 +223,83 @@ namespace gfcp {
   }
 
   void Space::disposeChildren() {
-    auto space = static_cast<cpSpace*>(m_handle);
+    auto space = static_cast<cpSpace*>(m_obj);
     cpSpaceEachShape(space, disposeShapeIterator, static_cast<void*>(space));
     cpSpaceEachConstraint(space, disposeConstraintIterator, static_cast<void*>(space));
     cpSpaceEachBody(space, disposeBodyIterator, static_cast<void*>(space));
   }
 
   int Space::getIterations() const {
-    return cpSpaceGetIterations(m_handle);
+    return cpSpaceGetIterations(m_obj);
   }
 
   void Space::setIterations(int iterations) {
-    cpSpaceSetIterations(m_handle, iterations);
+    cpSpaceSetIterations(m_obj, iterations);
   }
 
   gf::Vector2f Space::getGravity() const {
-    auto gravity = cpSpaceGetGravity(m_handle);
+    auto gravity = cpSpaceGetGravity(m_obj);
     return gf::vec(gravity.x, gravity.y);
   }
 
   void Space::setGravity(gf::Vector2f gravity) {
-    cpSpaceSetGravity(m_handle, cpv(gravity.x, gravity.y));
+    cpSpaceSetGravity(m_obj, cpv(gravity.x, gravity.y));
   }
 
   float Space::getDamping() const {
-    return cpSpaceGetDamping(m_handle);
+    return cpSpaceGetDamping(m_obj);
   }
 
   void Space::setDamping(float damping) {
-    cpSpaceSetDamping(m_handle, damping);
+    cpSpaceSetDamping(m_obj, damping);
   }
 
   float Space::getIdleSpeedThreshold() const {
-    return cpSpaceGetIdleSpeedThreshold(m_handle);
+    return cpSpaceGetIdleSpeedThreshold(m_obj);
   }
 
   void Space::setIdleSpeedThreshold(float threshold) {
-    cpSpaceSetIdleSpeedThreshold(m_handle, threshold);
+    cpSpaceSetIdleSpeedThreshold(m_obj, threshold);
   }
 
   float Space::getSleepTimeThreshold() const {
-    return cpSpaceGetSleepTimeThreshold(m_handle);
+    return cpSpaceGetSleepTimeThreshold(m_obj);
   }
 
   void Space::setSleepTimeThreshold(float threshold) {
-    cpSpaceSetSleepTimeThreshold(m_handle, threshold);
+    cpSpaceSetSleepTimeThreshold(m_obj, threshold);
   }
 
   float Space::getCollisionSlop() const {
-    return cpSpaceGetCollisionSlop(m_handle);
+    return cpSpaceGetCollisionSlop(m_obj);
   }
 
   void Space::setCollisionSlop(float slop) {
-    cpSpaceSetCollisionSlop(m_handle, slop);
+    cpSpaceSetCollisionSlop(m_obj, slop);
   }
 
   float Space::getCollisionBias() const {
-    return cpSpaceGetCollisionBias(m_handle);
+    return cpSpaceGetCollisionBias(m_obj);
   }
 
   void Space::setCollisionBias(float bias) {
-    cpSpaceSetCollisionBias(m_handle, bias);
+    cpSpaceSetCollisionBias(m_obj, bias);
   }
 
   unsigned Space::getCollisionPersistence() const {
-    return cpSpaceGetCollisionPersistence(m_handle);
+    return cpSpaceGetCollisionPersistence(m_obj);
   }
 
   void Space::setCollisionPersistence(unsigned persistence) {
-    cpSpaceSetCollisionPersistence(m_handle, persistence);
+    cpSpaceSetCollisionPersistence(m_obj, persistence);
   }
 
   float Space::getCurrentTimeStep() const {
-    return cpSpaceGetCurrentTimeStep(m_handle);
+    return cpSpaceGetCurrentTimeStep(m_obj);
   }
 
   bool Space::isLocked() {
-    return cpSpaceIsLocked(m_handle) == cpTrue;
+    return cpSpaceIsLocked(m_obj) == cpTrue;
   }
 
   namespace {
@@ -327,7 +327,7 @@ namespace gfcp {
   }
 
   void Space::setDefaultCollisionHandler(CollisionHandler& handler) {
-    auto raw = cpSpaceAddDefaultCollisionHandler(m_handle);
+    auto raw = cpSpaceAddDefaultCollisionHandler(m_obj);
     raw->beginFunc = myCollisionBeginFunc;
     raw->preSolveFunc = myCollisionPreSolveFunc;
     raw->postSolveFunc = myCollisionPostSolveFunc;
@@ -343,32 +343,28 @@ namespace gfcp {
 
   }
 
-  void Space::addShape(Shape& shape) {
-    cpSpaceAddShape(m_handle, shape.m_handle);
+  void Space::addShape(Shape shape) {
+    cpSpaceAddShape(m_obj, shape.m_obj);
   }
 
-  void Space::addBody(Body& body) {
-    cpSpaceAddBody(m_handle, body.m_handle);
+  void Space::addBody(Body body) {
+    cpSpaceAddBody(m_obj, body.m_obj);
   }
 
-  void Space::addBody(Body&& body) {
-    cpSpaceAddBody(m_handle, body.m_handle);
+  void Space::removeShape(Shape shape) {
+    cpSpaceRemoveShape(m_obj, shape.m_obj);
   }
 
-  void Space::removeShape(Shape& shape) {
-    cpSpaceRemoveShape(m_handle, shape.m_handle);
+  void Space::removeBody(Body body) {
+    cpSpaceRemoveBody(m_obj, body.m_obj);
   }
 
-  void Space::removeBody(Body& body) {
-    cpSpaceRemoveBody(m_handle, body.m_handle);
+  bool Space::containsShape(Shape shape) {
+    return cpSpaceContainsShape(m_obj, shape.m_obj) == cpTrue;
   }
 
-  bool Space::containsShape(Shape& shape) {
-    return cpSpaceContainsShape(m_handle, shape.m_handle) == cpTrue;
-  }
-
-  bool Space::containsBody(Body& body) {
-    return cpSpaceContainsBody(m_handle, body.m_handle) == cpTrue;
+  bool Space::containsBody(Body body) {
+    return cpSpaceContainsBody(m_obj, body.m_obj) == cpTrue;
   }
 
   namespace {
@@ -381,23 +377,23 @@ namespace gfcp {
   }
 
   void Space::eachBody(std::function<void(Body)> func) {
-    cpSpaceEachBody(m_handle, mySpaceBodyIteratorFunc, &func);
+    cpSpaceEachBody(m_obj, mySpaceBodyIteratorFunc, &func);
   }
 
   void Space::reindexStatic() {
-    cpSpaceReindexStatic(m_handle);
+    cpSpaceReindexStatic(m_obj);
   }
 
   void Space::reindexShape(Shape& shape) {
-    cpSpaceReindexShape(m_handle, shape.m_handle);
+    cpSpaceReindexShape(m_obj, shape.m_obj);
   }
 
   void Space::reindexShapesForBody(Body& body) {
-    cpSpaceReindexShapesForBody(m_handle, body.m_handle);
+    cpSpaceReindexShapesForBody(m_obj, body.m_obj);
   }
 
   void Space::useSpatialHash(float dim, int count) {
-    cpSpaceUseSpatialHash(m_handle, dim, count);
+    cpSpaceUseSpatialHash(m_obj, dim, count);
   }
 
   namespace {
@@ -457,12 +453,12 @@ namespace gfcp {
     options.colorForShape = mySpaceDebugDrawColorForShape;
     options.constraintColor = {  0.0f, 1.0f, 0.0f, 1.0f };
     options.collisionPointColor = { 0.0f, 0.0f, 1.0f, 1.0f };
-    cpSpaceDebugDraw(m_handle, &options);
+    cpSpaceDebugDraw(m_obj, &options);
   }
 
 
   void Space::update(gf::Time time) {
-    cpSpaceStep(m_handle, time.asSeconds());
+    cpSpaceStep(m_obj, time.asSeconds());
   }
 
   /*
@@ -474,7 +470,7 @@ namespace gfcp {
   static_assert(static_cast<int>(BodyType::Static) == static_cast<int>(CP_BODY_TYPE_STATIC), "Body type constant mismatch.");
 
   Body::Body(float mass, float moment)
-  : m_handle(cpBodyNew(mass, moment))
+  : m_obj(cpBodyNew(mass, moment))
   {
   }
 
@@ -487,162 +483,162 @@ namespace gfcp {
   }
 
   void Body::dispose() {
-    cpBodyFree(m_handle);
-    m_handle.clear();
+    cpBodyFree(m_obj);
+    m_obj = nullptr;
   }
 
   void Body::activate() {
-    cpBodyActivate(m_handle);
+    cpBodyActivate(m_obj);
   }
 
-  void Body::activateStatic(Shape& filter) {
-    cpBodyActivateStatic(m_handle, filter.m_handle);
+  void Body::activateStatic(Shape filter) {
+    cpBodyActivateStatic(m_obj, filter.m_obj);
   }
 
   void Body::sleep() {
-    cpBodySleep(m_handle);
+    cpBodySleep(m_obj);
   }
 
-  void Body::sleepWithGroup(Body& group) {
-    cpBodySleepWithGroup(m_handle, group.m_handle);
+  void Body::sleepWithGroup(Body group) {
+    cpBodySleepWithGroup(m_obj, group.m_obj);
   }
 
   bool Body::isSleeping() const {
-    return cpBodyIsSleeping(m_handle) == cpTrue;
+    return cpBodyIsSleeping(m_obj) == cpTrue;
   }
 
 
   BodyType Body::getType() {
-    return static_cast<BodyType>(cpBodyGetType(m_handle));
+    return static_cast<BodyType>(cpBodyGetType(m_obj));
   }
 
   void Body::setType(BodyType type) {
-    cpBodySetType(m_handle, static_cast<cpBodyType>(type));
+    cpBodySetType(m_obj, static_cast<cpBodyType>(type));
   }
 
   Space Body::getSpace() const {
-    return Space(cpBodyGetSpace(m_handle));
+    return Space(cpBodyGetSpace(m_obj));
   }
 
   float Body::getMass() const {
-    return cpBodyGetMass(m_handle);
+    return cpBodyGetMass(m_obj);
   }
 
   void Body::setMass(float mass) {
-    cpBodySetMass(m_handle, mass);
+    cpBodySetMass(m_obj, mass);
   }
 
   float Body::getMoment() const {
-    return cpBodyGetMoment(m_handle);
+    return cpBodyGetMoment(m_obj);
   }
 
   void Body::setMoment(float moment) {
-    cpBodySetMoment(m_handle, moment);
+    cpBodySetMoment(m_obj, moment);
   }
 
   gf::Vector2f Body::getPosition() const {
-    auto position = cpBodyGetPosition(m_handle);
+    auto position = cpBodyGetPosition(m_obj);
     return gf::vec(position.x, position.y);
   }
 
   void Body::setPosition(gf::Vector2f position) {
-    cpBodySetPosition(m_handle, cpv(position.x, position.y));
+    cpBodySetPosition(m_obj, cpv(position.x, position.y));
   }
 
   gf::Vector2f Body::getCenterOfGravity() const {
-    auto cog = cpBodyGetCenterOfGravity(m_handle);
+    auto cog = cpBodyGetCenterOfGravity(m_obj);
     return gf::vec(cog.x, cog.y);
   }
 
   void Body::setCenterOfGravity(gf::Vector2f cog) {
-    cpBodySetCenterOfGravity(m_handle, cpv(cog.x, cog.y));
+    cpBodySetCenterOfGravity(m_obj, cpv(cog.x, cog.y));
   }
 
   gf::Vector2f Body::getVelocity() const {
-    auto velocity = cpBodyGetVelocity(m_handle);
+    auto velocity = cpBodyGetVelocity(m_obj);
     return gf::vec(velocity.x, velocity.y);
   }
 
   void Body::setVelocity(gf::Vector2f velocity) {
-    cpBodySetVelocity(m_handle, cpv(velocity.x, velocity.y));
+    cpBodySetVelocity(m_obj, cpv(velocity.x, velocity.y));
   }
 
   gf::Vector2f Body::getForce() const {
-    auto force = cpBodyGetForce(m_handle);
+    auto force = cpBodyGetForce(m_obj);
     return gf::vec(force.x, force.y);
   }
 
   void Body::setForce(gf::Vector2f force) {
-    cpBodySetForce(m_handle, cpv(force.x, force.y));
+    cpBodySetForce(m_obj, cpv(force.x, force.y));
   }
 
   float Body::getAngle() const {
-    return cpBodyGetAngle(m_handle);
+    return cpBodyGetAngle(m_obj);
   }
 
   void Body::setAngle(float angle) {
-    cpBodySetAngle(m_handle, angle);
+    cpBodySetAngle(m_obj, angle);
   }
 
   float Body::getAngularVelocity() const {
-    return cpBodyGetAngularVelocity(m_handle);
+    return cpBodyGetAngularVelocity(m_obj);
   }
 
   void Body::setAngularVelocity(float velocity) {
-    cpBodySetAngularVelocity(m_handle, velocity);
+    cpBodySetAngularVelocity(m_obj, velocity);
   }
 
   float Body::getTorque() const {
-    return cpBodyGetTorque(m_handle);
+    return cpBodyGetTorque(m_obj);
   }
 
   void Body::setTorque(float torque) {
-    cpBodySetTorque(m_handle, torque);
+    cpBodySetTorque(m_obj, torque);
   }
 
   gf::Vector2f Body::getRotation() const {
-    auto rotation = cpBodyGetRotation(m_handle);
+    auto rotation = cpBodyGetRotation(m_obj);
     return gf::vec(rotation.x, rotation.y);
   }
 
   gf::Vector2f Body::computeLocalToWorldCoordinates(gf::Vector2f point) const {
-    auto coords = cpBodyLocalToWorld(m_handle, cpv(point.x, point.y));
+    auto coords = cpBodyLocalToWorld(m_obj, cpv(point.x, point.y));
     return gf::vec(coords.x, coords.y);
   }
 
   gf::Vector2f Body::computeWorldToLocalCoordinates(gf::Vector2f point) const {
-    auto coords = cpBodyWorldToLocal(m_handle, cpv(point.x, point.y));
+    auto coords = cpBodyWorldToLocal(m_obj, cpv(point.x, point.y));
     return gf::vec(coords.x, coords.y);
   }
 
   void Body::applyForceAtWorldPoint(gf::Vector2f force, gf::Vector2f point) {
-    cpBodyApplyForceAtWorldPoint(m_handle, cpv(force.x, force.y), cpv(point.x, point.y));
+    cpBodyApplyForceAtWorldPoint(m_obj, cpv(force.x, force.y), cpv(point.x, point.y));
   }
 
   void Body::applyForceAtLocalPoint(gf::Vector2f force, gf::Vector2f point) {
-    cpBodyApplyForceAtLocalPoint(m_handle, cpv(force.x, force.y), cpv(point.x, point.y));
+    cpBodyApplyForceAtLocalPoint(m_obj, cpv(force.x, force.y), cpv(point.x, point.y));
   }
 
   void Body::applyImpulseAtWorldPoint(gf::Vector2f impulse, gf::Vector2f point) {
-    cpBodyApplyImpulseAtWorldPoint(m_handle, cpv(impulse.x, impulse.y), cpv(point.x, point.y));
+    cpBodyApplyImpulseAtWorldPoint(m_obj, cpv(impulse.x, impulse.y), cpv(point.x, point.y));
   }
 
   void Body::applyImpulseAtLocalPoint(gf::Vector2f impulse, gf::Vector2f point) {
-    cpBodyApplyImpulseAtLocalPoint(m_handle, cpv(impulse.x, impulse.y), cpv(point.x, point.y));
+    cpBodyApplyImpulseAtLocalPoint(m_obj, cpv(impulse.x, impulse.y), cpv(point.x, point.y));
   }
 
   gf::Vector2f Body::getVelocityAtWorldPoint(gf::Vector2f point) const {
-    auto velocity = cpBodyGetVelocityAtWorldPoint(m_handle, cpv(point.x, point.y));
+    auto velocity = cpBodyGetVelocityAtWorldPoint(m_obj, cpv(point.x, point.y));
     return gf::vec(velocity.x, velocity.y);
   }
 
   gf::Vector2f Body::getVelocityAtLocalPoint(gf::Vector2f point) const {
-    auto velocity = cpBodyGetVelocityAtLocalPoint(m_handle, cpv(point.x, point.y));
+    auto velocity = cpBodyGetVelocityAtLocalPoint(m_obj, cpv(point.x, point.y));
     return gf::vec(velocity.x, velocity.y);
   }
 
   float Body::getKinematicEnergy() const {
-    return cpBodyKineticEnergy(m_handle);
+    return cpBodyKineticEnergy(m_obj);
   }
 
   namespace {
@@ -653,7 +649,7 @@ namespace gfcp {
   }
 
   void Body::eachShape(std::function<void(Body, Shape)> func) {
-    cpBodyEachShape(m_handle, myBodyShapeIterator, &func);
+    cpBodyEachShape(m_obj, myBodyShapeIterator, &func);
   }
 
   /*
@@ -661,150 +657,163 @@ namespace gfcp {
    */
 
   void Shape::dispose() {
-    cpShapeFree(m_handle);
-    m_handle.clear();
+    cpShapeFree(m_obj);
+    m_obj = nullptr;
   }
 
   Space Shape::getSpace() const {
-    return Space(cpShapeGetSpace(m_handle));
+    return Space(cpShapeGetSpace(m_obj));
   }
 
   Body Shape::getBody() const {
-    return Body(cpShapeGetBody(m_handle));
+    return Body(cpShapeGetBody(m_obj));
   }
 
-  void Shape::setBody(Body& body) {
-    cpShapeSetBody(m_handle, body.m_handle);
+  void Shape::setBody(Body body) {
+    cpShapeSetBody(m_obj, body.m_obj);
   }
 
   float Shape::getMass() {
-    return cpShapeGetMass(m_handle);
+    return cpShapeGetMass(m_obj);
   }
 
   void Shape::setMass(float mass) {
-    cpShapeSetMass(m_handle, mass);
+    cpShapeSetMass(m_obj, mass);
   }
 
   float Shape::getDensity() {
-    return cpShapeGetDensity(m_handle);
+    return cpShapeGetDensity(m_obj);
   }
 
   void Shape::setDensity(float density) {
-    cpShapeSetDensity(m_handle, density);
+    cpShapeSetDensity(m_obj, density);
   }
 
   float Shape::getMoment() {
-    return cpShapeGetMoment(m_handle);
+    return cpShapeGetMoment(m_obj);
   }
 
   float Shape::getArea() {
-    return cpShapeGetArea(m_handle);
+    return cpShapeGetArea(m_obj);
   }
 
   gf::Vector2f Shape::getCenterOfGravity() {
-    auto cog = cpShapeGetCenterOfGravity(m_handle);
+    auto cog = cpShapeGetCenterOfGravity(m_obj);
     return gf::vec(cog.x, cog.y);
   }
 
   gf::RectF Shape::getBB() const {
-    auto bb = cpShapeGetBB(m_handle);
+    auto bb = cpShapeGetBB(m_obj);
     return gf::RectF::fromMinMax(gf::vec(bb.l, bb.b), gf::vec(bb.r, bb.t));
   }
 
   bool Shape::getSensor() const {
-    return cpShapeGetSensor(m_handle);
+    return cpShapeGetSensor(m_obj);
   }
 
   void Shape::setSensor(bool sensor) {
-    cpShapeSetSensor(m_handle, sensor);
+    cpShapeSetSensor(m_obj, sensor);
   }
 
   float Shape::getElasticity() const {
-    return cpShapeGetElasticity(m_handle);
+    return cpShapeGetElasticity(m_obj);
   }
 
   void Shape::setElasticity(float elasticity) {
-    cpShapeSetElasticity(m_handle, elasticity);
+    cpShapeSetElasticity(m_obj, elasticity);
   }
 
   float Shape::getFriction() const {
-    return cpShapeGetFriction(m_handle);
+    return cpShapeGetFriction(m_obj);
   }
 
   void Shape::setFriction(float friction) {
-    cpShapeSetFriction(m_handle, friction);
+    cpShapeSetFriction(m_obj, friction);
   }
 
   gf::Vector2f Shape::getSurfaceVelocity() const {
-    auto velocity = cpShapeGetSurfaceVelocity(m_handle);
+    auto velocity = cpShapeGetSurfaceVelocity(m_obj);
     return gf::vec(velocity.x, velocity.y);
   }
 
   void Shape::setSurfaceVelocity(gf::Vector2f velocity) {
-    cpShapeSetSurfaceVelocity(m_handle, cpv(velocity.x, velocity.y));
+    cpShapeSetSurfaceVelocity(m_obj, cpv(velocity.x, velocity.y));
   }
 
   uintptr_t Shape::getCollisionType() const {
-    return cpShapeGetCollisionType(m_handle);
+    return cpShapeGetCollisionType(m_obj);
   }
 
   void Shape::setCollisionType(uintptr_t type) {
-    cpShapeSetCollisionType(m_handle, type);
+    cpShapeSetCollisionType(m_obj, type);
   }
 
   ShapeFilter Shape::getShapeFilter() const {
-    auto filter = cpShapeGetFilter(m_handle);
+    auto filter = cpShapeGetFilter(m_obj);
     return { filter.group, filter.categories, filter.mask };
   }
 
   void Shape::setShapeFilter(ShapeFilter filter) {
-    cpShapeSetFilter(m_handle, cpShapeFilterNew(filter.group, filter.categories, filter.mask));
+    cpShapeSetFilter(m_obj, cpShapeFilterNew(filter.group, filter.categories, filter.mask));
+  }
+
+  cpBody * Shape::unwrap(Body body) {
+    return body.m_obj;
   }
 
   /*
    * CircleShape
    */
-  CircleShape::CircleShape(Body& body, float radius, gf::Vector2f offset)
-  : Shape(cpCircleShapeNew(body.m_handle, radius, cpv(offset.x, offset.y)))
+
+  CircleShape::CircleShape(Body body, float radius, gf::Vector2f offset)
+  : Shape(cpCircleShapeNew(unwrap(body), radius, cpv(offset.x, offset.y)))
   {
   }
 
   gf::Vector2f CircleShape::getOffset() const {
-    auto offset = cpCircleShapeGetOffset(m_handle);
+    auto offset = cpCircleShapeGetOffset(m_obj);
     return gf::vec(offset.x, offset.y);
   }
 
   float CircleShape::getRadius() const {
-    return cpCircleShapeGetRadius(m_handle);
+    return cpCircleShapeGetRadius(m_obj);
   }
 
-  SegmentShape::SegmentShape(Body& body, gf::Vector2f a, gf::Vector2f b, float radius)
-  : Shape(cpSegmentShapeNew(body.m_handle, cpv(a.x, a.y), cpv(b.x, b.y), radius))
+  /*
+   * SegmentShape
+   */
+
+  SegmentShape::SegmentShape(Body body, gf::Vector2f a, gf::Vector2f b, float radius)
+  : Shape(cpSegmentShapeNew(unwrap(body), cpv(a.x, a.y), cpv(b.x, b.y), radius))
   {
   }
 
   void SegmentShape::setNeighbors(gf::Vector2f prev, gf::Vector2f next) {
-    cpSegmentShapeSetNeighbors(m_handle, cpv(prev.x, prev.y), cpv(next.x, next.y));
+    cpSegmentShapeSetNeighbors(m_obj, cpv(prev.x, prev.y), cpv(next.x, next.y));
   }
 
   gf::Vector2f SegmentShape::getA() const {
-    auto a = cpSegmentShapeGetA(m_handle);
+    auto a = cpSegmentShapeGetA(m_obj);
     return gf::vec(a.x, a.y);
   }
 
   gf::Vector2f SegmentShape::getB() const {
-    auto b = cpSegmentShapeGetB(m_handle);
+    auto b = cpSegmentShapeGetB(m_obj);
     return gf::vec(b.x, b.y);
   }
 
   gf::Vector2f SegmentShape::getNormal() const {
-    auto n = cpSegmentShapeGetNormal(m_handle);
+    auto n = cpSegmentShapeGetNormal(m_obj);
     return gf::vec(n.x, n.y);
   }
 
   float SegmentShape::getRadius() const {
-    return cpSegmentShapeGetRadius(m_handle);
+    return cpSegmentShapeGetRadius(m_obj);
   }
+
+  /*
+   * PolygonShape
+   */
 
   namespace {
 
@@ -821,27 +830,417 @@ namespace gfcp {
     }
   }
 
-  PolygonShape::PolygonShape(Body& body, gf::Span<const gf::Vector2f> verts, gf::Matrix3f transform, float radius)
-  : Shape(createPolygoneShape(body.m_handle, verts, transform, radius))
+  PolygonShape::PolygonShape(Body body, gf::Span<const gf::Vector2f> verts, gf::Matrix3f transform, float radius)
+  : Shape(createPolygoneShape(unwrap(body), verts, transform, radius))
   {
   }
 
-  PolygonShape::PolygonShape(Body& body, gf::RectF box, float radius)
-  : Shape(cpBoxShapeNew2(body.m_handle, cpBBNew(box.min.x, box.min.y, box.max.x, box.max.y), radius))
+  PolygonShape::PolygonShape(Body body, gf::RectF box, float radius)
+  : Shape(cpBoxShapeNew2(unwrap(body), cpBBNew(box.min.x, box.min.y, box.max.x, box.max.y), radius))
   {
   }
 
   std::size_t PolygonShape::getPointCount() const {
-    return static_cast<std::size_t>(cpPolyShapeGetCount(m_handle));
+    return static_cast<std::size_t>(cpPolyShapeGetCount(m_obj));
   }
 
   gf::Vector2f PolygonShape::getPoint(std::size_t index) const {
-    auto point = cpPolyShapeGetVert(m_handle, static_cast<int>(index));
+    auto point = cpPolyShapeGetVert(m_obj, static_cast<int>(index));
     return gf::vec(point.x, point.y);
   }
 
   float PolygonShape::getRadius() const {
-    return cpPolyShapeGetRadius(m_handle);
+    return cpPolyShapeGetRadius(m_obj);
+  }
+
+  /*
+   * Constraint
+   */
+
+  void Constraint::dispose() {
+    cpConstraintFree(m_obj);
+    m_obj = nullptr;
+  }
+
+  Space Constraint::getSpace() const {
+    return Space(cpConstraintGetSpace(m_obj));
+  }
+
+  Body Constraint::getBodyA() const {
+    return Body(cpConstraintGetBodyA(m_obj));
+  }
+
+  Body Constraint::getBodyB() const {
+    return Body(cpConstraintGetBodyB(m_obj));
+  }
+
+  float Constraint::getMaxForce() const {
+    return cpConstraintGetMaxForce(m_obj);
+  }
+
+  void Constraint::setMaxForce(float force) {
+    cpConstraintSetMaxForce(m_obj, force);
+  }
+
+  float Constraint::getErrorBias() const {
+    return cpConstraintGetErrorBias(m_obj);
+  }
+
+  void Constraint::setErrorBias(float bias) {
+    cpConstraintSetErrorBias(m_obj, bias);
+  }
+
+  float Constraint::getMaxBias() const {
+    return cpConstraintGetMaxBias(m_obj);
+  }
+
+  void Constraint::setMaxBias(float bias) {
+    cpConstraintSetMaxBias(m_obj, bias);
+  }
+
+  bool Constraint::getCollideBodies() const {
+    return cpConstraintGetCollideBodies(m_obj) == cpTrue;
+  }
+
+  void Constraint::setCollideBodies(bool collide) {
+    cpConstraintSetCollideBodies(m_obj, collide);
+  }
+
+  float Constraint::getImpulse() {
+    return cpConstraintGetImpulse(m_obj);
+  }
+
+  cpBody * Constraint::unwrap(Body body) {
+    return body.m_obj;
+  }
+
+  /*
+   * PinJoint
+   */
+
+  PinJoint::PinJoint(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB)
+  : Constraint(cpPinJointNew(unwrap(a), unwrap(b), cpv(anchorA.x, anchorA.y), cpv(anchorB.x, anchorB.y)))
+  {
+  }
+
+  gf::Vector2f PinJoint::getAnchorA() const {
+    auto anchor = cpPinJointGetAnchorA(m_obj);
+    return gf::vec(anchor.x, anchor.y);
+  }
+
+  void PinJoint::setAnchorA(gf::Vector2f anchor) {
+    cpPinJointSetAnchorA(m_obj, cpv(anchor.x, anchor.y));
+  }
+
+  gf::Vector2f PinJoint::getAnchorB() const {
+    auto anchor = cpPinJointGetAnchorB(m_obj);
+    return gf::vec(anchor.x, anchor.y);
+  }
+
+  void PinJoint::setAnchorB(gf::Vector2f anchor) {
+    cpPinJointSetAnchorB(m_obj, cpv(anchor.x, anchor.y));
+  }
+
+  float PinJoint::getDistance() const {
+    return cpPinJointGetDist(m_obj);
+  }
+
+  void PinJoint::setDistance(float distance) {
+    cpPinJointSetDist(m_obj, distance);
+  }
+
+  /*
+   * SlideJoint
+   */
+
+  SlideJoint::SlideJoint(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB, float min, float max)
+  : Constraint(cpSlideJointNew(unwrap(a), unwrap(b), cpv(anchorA.x, anchorA.y), cpv(anchorB.x, anchorB.y), min, max))
+  {
+  }
+
+  gf::Vector2f SlideJoint::getAnchorA() const {
+    auto anchor = cpSlideJointGetAnchorA(m_obj);
+    return gf::vec(anchor.x, anchor.y);
+  }
+
+  void SlideJoint::setAnchorA(gf::Vector2f anchor) {
+    cpSlideJointSetAnchorA(m_obj, cpv(anchor.x, anchor.y));
+  }
+
+  gf::Vector2f SlideJoint::getAnchorB() const {
+    auto anchor = cpSlideJointGetAnchorB(m_obj);
+    return gf::vec(anchor.x, anchor.y);
+  }
+
+  void SlideJoint::setAnchorB(gf::Vector2f anchor) {
+    cpSlideJointSetAnchorB(m_obj, cpv(anchor.x, anchor.y));
+  }
+
+  float SlideJoint::getMin() const {
+    return cpSlideJointGetMin(m_obj);
+  }
+
+  void SlideJoint::setMix(float min) {
+    cpSlideJointSetMin(m_obj, min);
+  }
+
+  float SlideJoint::getMax() const {
+    return cpSlideJointGetMax(m_obj);
+  }
+
+  void SlideJoint::setMax(float max) {
+    cpSlideJointSetMax(m_obj, max);
+  }
+
+  /*
+   * PivotJoint
+   */
+
+  PivotJoint::PivotJoint(Body a, Body b, gf::Vector2f pivot)
+  : Constraint(cpPivotJointNew(unwrap(a), unwrap(b), cpv(pivot.x, pivot.y)))
+  {
+  }
+
+  PivotJoint::PivotJoint(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB)
+  : Constraint(cpPivotJointNew2(unwrap(a), unwrap(b), cpv(anchorA.x, anchorA.y), cpv(anchorB.x, anchorB.y)))
+  {
+  }
+
+  gf::Vector2f PivotJoint::getAnchorA() const {
+    auto anchor = cpPivotJointGetAnchorA(m_obj);
+    return gf::vec(anchor.x, anchor.y);
+  }
+
+  void PivotJoint::setAnchorA(gf::Vector2f anchor) {
+    cpPivotJointSetAnchorA(m_obj, cpv(anchor.x, anchor.y));
+  }
+
+  gf::Vector2f PivotJoint::getAnchorB() const {
+    auto anchor = cpPivotJointGetAnchorA(m_obj);
+    return gf::vec(anchor.x, anchor.y);
+  }
+
+  void PivotJoint::setAnchorB(gf::Vector2f anchor) {
+    cpPivotJointSetAnchorB(m_obj, cpv(anchor.x, anchor.y));
+  }
+
+  /*
+   * GrooveJoint
+   */
+
+  GrooveJoint::GrooveJoint(Body a, Body b, gf::Vector2f grooveA, gf::Vector2f grooveB, gf::Vector2f anchorB)
+  : Constraint(cpGrooveJointNew(unwrap(a), unwrap(b), cpv(grooveA.x, grooveA.y), cpv(grooveB.x, grooveB.y), cpv(anchorB.x, anchorB.y)))
+  {
+  }
+
+  gf::Vector2f GrooveJoint::getGrooveA() const {
+    auto groove = cpGrooveJointGetGrooveA(m_obj);
+    return gf::vec(groove.x, groove.y);
+  }
+
+  void GrooveJoint::setGrooveA(gf::Vector2f groove) {
+    cpGrooveJointSetGrooveA(m_obj, cpv(groove.x, groove.y));
+  }
+
+  gf::Vector2f GrooveJoint::getGrooveB() const {
+    auto groove = cpGrooveJointGetGrooveB(m_obj);
+    return gf::vec(groove.x, groove.y);
+  }
+
+  void GrooveJoint::setGrooveB(gf::Vector2f groove) {
+    cpGrooveJointSetGrooveB(m_obj, cpv(groove.x, groove.y));
+  }
+
+  gf::Vector2f GrooveJoint::getAnchorB() const {
+    auto anchor = cpGrooveJointGetAnchorB(m_obj);
+    return gf::vec(anchor.x, anchor.y);
+  }
+
+  void GrooveJoint::setAnchorB(gf::Vector2f anchor) {
+    cpGrooveJointSetAnchorB(m_obj, cpv(anchor.x, anchor.y));
+  }
+
+  /*
+   * DampedSpring
+   */
+
+  DampedSpring::DampedSpring(Body a, Body b, gf::Vector2f anchorA, gf::Vector2f anchorB, float restLength, float stiffness, float damping)
+  : Constraint(cpDampedSpringNew(unwrap(a), unwrap(b), cpv(anchorA.x, anchorA.y), cpv(anchorB.x, anchorB.y), restLength, stiffness, damping))
+  {
+  }
+
+  gf::Vector2f DampedSpring::getAnchorA() const {
+    auto anchor = cpDampedSpringGetAnchorA(m_obj);
+    return gf::vec(anchor.x, anchor.y);
+  }
+
+  void DampedSpring::setAnchorA(gf::Vector2f anchor) {
+    cpDampedSpringSetAnchorA(m_obj, cpv(anchor.x, anchor.y));
+  }
+
+  gf::Vector2f DampedSpring::getAnchorB() const {
+    auto anchor = cpDampedSpringGetAnchorB(m_obj);
+    return gf::vec(anchor.x, anchor.y);
+  }
+
+  void DampedSpring::setAnchorB(gf::Vector2f anchor)  {
+    cpDampedSpringSetAnchorB(m_obj, cpv(anchor.x, anchor.y));
+  }
+
+  float DampedSpring::getRestLength() const {
+    return cpDampedSpringGetRestLength(m_obj);
+  }
+
+  void DampedSpring::setRestLength(float restLength) {
+    cpDampedSpringSetRestLength(m_obj, restLength);
+  }
+
+  float DampedSpring::getStiffness() const {
+    return cpDampedSpringGetStiffness(m_obj);
+  }
+
+  void DampedSpring::setStiffness(float stiffness) {
+    cpDampedSpringSetStiffness(m_obj, stiffness);
+  }
+
+  float DampedSpring::getDamping() const {
+    return cpDampedSpringGetDamping(m_obj);
+  }
+
+  void DampedSpring::setDamping(float damping) {
+    cpDampedSpringSetDamping(m_obj, damping);
+  }
+
+  /*
+   * DampedRotarySpring
+   */
+
+  DampedRotarySpring::DampedRotarySpring(Body a, Body b, float restAngle, float stiffness, float damping)
+  : Constraint(cpDampedRotarySpringNew(unwrap(a), unwrap(b), restAngle, stiffness, damping))
+  {
+  }
+
+  float DampedRotarySpring::getRestAngle() const {
+    return cpDampedRotarySpringGetRestAngle(m_obj);
+  }
+
+  void DampedRotarySpring::setRestAngle(float restAngle) {
+    cpDampedRotarySpringSetRestAngle(m_obj, restAngle);
+  }
+
+  float DampedRotarySpring::getStiffness() const {
+    return cpDampedRotarySpringGetStiffness(m_obj);
+  }
+
+  void DampedRotarySpring::setStiffness(float stiffness) {
+    cpDampedRotarySpringSetStiffness(m_obj, stiffness);
+  }
+
+  float DampedRotarySpring::getDamping() const {
+    return cpDampedRotarySpringGetDamping(m_obj);
+  }
+
+  void DampedRotarySpring::setDamping(float damping) {
+    cpDampedRotarySpringSetDamping(m_obj, damping);
+  }
+
+  /*
+   * RotaryLimitJoint
+   */
+
+  RotaryLimitJoint::RotaryLimitJoint(Body a, Body b, float min, float max)
+  : Constraint(cpRotaryLimitJointNew(unwrap(a), unwrap(b), min, max))
+  {
+  }
+
+  float RotaryLimitJoint::getMin() const {
+    return cpRotaryLimitJointGetMin(m_obj);
+  }
+
+  void RotaryLimitJoint::setMix(float min) {
+    cpRotaryLimitJointSetMin(m_obj, min);
+  }
+
+  float RotaryLimitJoint::getMax() const {
+    return cpRotaryLimitJointGetMax(m_obj);
+  }
+
+  void RotaryLimitJoint::setMax(float max) {
+    cpRotaryLimitJointSetMax(m_obj, max);
+  }
+
+  /*
+   * RatchetJoint
+   */
+
+  RatchetJoint::RatchetJoint(Body a, Body b, float phase, float ratchet)
+  : Constraint(cpRatchetJointNew(unwrap(a), unwrap(b), phase, ratchet))
+  {
+  }
+
+  float RatchetJoint::getAngle() const {
+    return cpRatchetJointGetAngle(m_obj);
+  }
+  void RatchetJoint::setAngle(float angle) {
+    cpRatchetJointSetAngle(m_obj, angle);
+  }
+
+  float RatchetJoint::getPhase() const {
+    return cpRatchetJointGetPhase(m_obj);
+  }
+
+  void RatchetJoint::setPhase(float phase) {
+    cpRatchetJointSetPhase(m_obj, phase);
+  }
+
+  float RatchetJoint::getRatchet() const {
+    return cpRatchetJointGetRatchet(m_obj);
+  }
+
+  void RatchetJoint::setRatchet(float ratchet) {
+    cpRatchetJointSetRatchet(m_obj, ratchet);
+  }
+
+  /*
+   * GearJoint
+   */
+
+  GearJoint::GearJoint(Body a, Body b, float phase, float ratio)
+  : Constraint(cpGearJointNew(unwrap(a), unwrap(b), phase, ratio))
+  {
+  }
+
+  float GearJoint::getPhase() const {
+    return cpGearJointGetPhase(m_obj);
+  }
+
+  void GearJoint::setPhase(float phase) {
+    cpGearJointSetPhase(m_obj, phase);
+  }
+
+  float GearJoint::getRatio() const {
+    return cpGearJointGetRatio(m_obj);
+  }
+
+  void GearJoint::setRatio(float ratio) {
+    cpGearJointSetRatio(m_obj, ratio);
+  }
+
+  /*
+   * SimpleMotor
+   */
+
+  SimpleMotor::SimpleMotor(Body a, Body b, float rate)
+  : Constraint(cpSimpleMotorNew(unwrap(a), unwrap(b), rate))
+  {
+  }
+
+  float SimpleMotor::getRate() const {
+    return cpSimpleMotorGetRate(m_obj);
+  }
+
+  void SimpleMotor::setRate(float rate) {
+    cpSimpleMotorSetRate(m_obj, rate);
   }
 
   /*
@@ -886,27 +1285,27 @@ namespace gfcp {
     return Body(obj);
   }
 
-  CircleShape PhysicsFactory::makeCircleShape(Body& body, float radius, gf::Vector2f offset) {
+  CircleShape PhysicsFactory::makeCircleShape(Body body, float radius, gf::Vector2f offset) {
     CircleShape shape(body, radius, offset);
-    m_shapes.push_back(shape.m_handle);
+    m_shapes.push_back(shape.m_obj);
     return shape;
   }
 
-  SegmentShape PhysicsFactory::makeSegmentShape(Body& body, gf::Vector2f a, gf::Vector2f b, float radius) {
+  SegmentShape PhysicsFactory::makeSegmentShape(Body body, gf::Vector2f a, gf::Vector2f b, float radius) {
     SegmentShape shape(body, a, b, radius);
-    m_shapes.push_back(shape.m_handle);
+    m_shapes.push_back(shape.m_obj);
     return shape;
   }
 
-  PolygonShape PhysicsFactory::makePolygonShape(Body& body, gf::Span<const gf::Vector2f> verts, gf::Matrix3f transform, float radius) {
+  PolygonShape PhysicsFactory::makePolygonShape(Body body, gf::Span<const gf::Vector2f> verts, gf::Matrix3f transform, float radius) {
     PolygonShape shape(body, verts, transform, radius);
-    m_shapes.push_back(shape.m_handle);
+    m_shapes.push_back(shape.m_obj);
     return shape;
   }
 
-  PolygonShape PhysicsFactory::makeBoxShape(Body& body, gf::RectF box, float radius) {
+  PolygonShape PhysicsFactory::makeBoxShape(Body body, gf::RectF box, float radius) {
     PolygonShape shape(body, box, radius);
-    m_shapes.push_back(shape.m_handle);
+    m_shapes.push_back(shape.m_obj);
     return shape;
   }
 
