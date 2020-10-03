@@ -124,6 +124,13 @@ namespace gfcp {
     cpArbiterCallWildcardSeparateB(m_obj, space.m_obj);
   }
 
+  void * Arbiter::getRawUserData() const {
+    return cpArbiterGetUserData(m_obj);
+  }
+
+  void Arbiter::setRawUserData(void * data) {
+    cpArbiterSetUserData(m_obj, data);
+  }
 
   /*
    * CollisionHandler
@@ -336,11 +343,11 @@ namespace gfcp {
   }
 
   void Space::setCollisionHandler(CollisionHandler& handler, uintptr_t a, uintptr_t b) {
-
+    // TODO
   }
 
   void Space::setWildcardHandler(CollisionHandler& handler, uintptr_t type) {
-
+    // TODO
   }
 
   void Space::addShape(Shape shape) {
@@ -489,6 +496,14 @@ namespace gfcp {
 
   void Space::update(gf::Time time) {
     cpSpaceStep(m_obj, time.asSeconds());
+  }
+
+  void * Space::getRawUserData() const {
+    return cpSpaceGetUserData(m_obj);
+  }
+
+  void Space::setRawUserData(void * data) {
+    cpSpaceSetUserData(m_obj, data);
   }
 
   /*
@@ -700,6 +715,14 @@ namespace gfcp {
     cpBodyEachArbiter(m_obj, myBodyArbiterIteratorFunc, &func);
   }
 
+  void * Body::getRawUserData() const {
+    return cpBodyGetUserData(m_obj);
+  }
+
+  void Body::setRawUserData(void * data) {
+    cpBodySetUserData(m_obj, data);
+  }
+
   /*
    * Shape
    */
@@ -807,6 +830,14 @@ namespace gfcp {
 
   cpBody * Shape::unwrap(Body body) {
     return body.m_obj;
+  }
+
+  void * Shape::getRawUserData() const {
+    return cpShapeGetUserData(m_obj);
+  }
+
+  void Shape::setRawUserData(void * data) {
+    cpShapeSetUserData(m_obj, data);
   }
 
   /*
@@ -960,6 +991,14 @@ namespace gfcp {
 
   cpBody * Constraint::unwrap(Body body) {
     return body.m_obj;
+  }
+
+  void * Constraint::getRawUserData() const {
+    return cpConstraintGetUserData(m_obj);
+  }
+
+  void Constraint::setRawUserData(void * data) {
+    cpConstraintSetUserData(m_obj, data);
   }
 
   /*

@@ -38,7 +38,15 @@ namespace gfcp {
     gf::Vector2f getSurfaceVelocity();
     void setSurfaceVelocity(gf::Vector2f velocity);
 
-    // TODO: userdata
+    template<typename T>
+    T& getUserData() {
+      return *static_cast<T*>(getRawUserData());
+    }
+
+    template<typename T>
+    void setUserData(T& data) {
+      setUserData(std::addressof(data));
+    }
 
     gf::Vector2f computeTotalImpulse() const;
     float computeTotalKineticEnergy() const;
@@ -70,6 +78,10 @@ namespace gfcp {
 
     void callWildcardSeparateA(Space space);
     void callWildcardSeparateB(Space space);
+
+  private:
+    void * getRawUserData() const;
+    void setRawUserData(void * data);
 
   private:
     cpArbiter * m_obj;
@@ -132,7 +144,15 @@ namespace gfcp {
     unsigned getCollisionPersistence() const;
     void setCollisionPersistence(unsigned persistence);
 
-    // TODO: userdata
+    template<typename T>
+    T& getUserData() {
+      return *static_cast<T*>(getRawUserData());
+    }
+
+    template<typename T>
+    void setUserData(T& data) {
+      setUserData(std::addressof(data));
+    }
 
     float getCurrentTimeStep() const;
 
@@ -176,6 +196,10 @@ namespace gfcp {
     friend class Body;
     friend class PhysicsFactory;
     friend class Shape;
+
+  private:
+    void * getRawUserData() const;
+    void setRawUserData(void * data);
 
   private:
     cpSpace * m_obj;
@@ -244,7 +268,15 @@ namespace gfcp {
 
     gf::Vector2f getRotation() const;
 
-    // TODO: userdata
+    template<typename T>
+    T& getUserData() {
+      return *static_cast<T*>(getRawUserData());
+    }
+
+    template<typename T>
+    void setUserData(T& data) {
+      setUserData(std::addressof(data));
+    }
 
     // TODO: update func (?)
 
@@ -274,6 +306,11 @@ namespace gfcp {
     friend class Space;
     friend class Shape;
 
+  private:
+    void * getRawUserData() const;
+    void setRawUserData(void * data);
+
+  private:
     cpBody * m_obj;
   };
 
@@ -330,7 +367,15 @@ namespace gfcp {
     gf::Vector2f getSurfaceVelocity() const;
     void setSurfaceVelocity(gf::Vector2f velocity);
 
-    // TODO userdata
+    template<typename T>
+    T& getUserData() {
+      return *static_cast<T*>(getRawUserData());
+    }
+
+    template<typename T>
+    void setUserData(T& data) {
+      setUserData(std::addressof(data));
+    }
 
     uintptr_t getCollisionType() const;
     void setCollisionType(uintptr_t type);
@@ -345,6 +390,9 @@ namespace gfcp {
 
   protected:
     cpBody * unwrap(Body body);
+
+    void * getRawUserData() const;
+    void setRawUserData(void * data);
 
   protected:
     cpShape * m_obj;
@@ -408,7 +456,15 @@ namespace gfcp {
 
     // TODO: pre-solve and post-solve
 
-    // TODO: userdata
+    template<typename T>
+    T& getUserData() {
+      return *static_cast<T*>(getRawUserData());
+    }
+
+    template<typename T>
+    void setUserData(T& data) {
+      setUserData(std::addressof(data));
+    }
 
     float getImpulse();
 
@@ -418,6 +474,9 @@ namespace gfcp {
 
   protected:
     cpBody * unwrap(Body body);
+
+    void * getRawUserData() const;
+    void setRawUserData(void * data);
 
   protected:
     cpConstraint * m_obj;
