@@ -895,7 +895,6 @@ namespace gfcp {
    */
 
   namespace {
-
     cpShape* createPolygoneShape(cpBody * body, gf::Span<const gf::Vector2f> verts, gf::Matrix3f t, float radius) {
       std::vector<cpVect> transformed;
 

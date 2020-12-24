@@ -39,12 +39,12 @@ namespace gfcp {
     void setSurfaceVelocity(gf::Vector2f velocity);
 
     template<typename T>
-    T& getUserData() {
+    T & getUserData() {
       return *static_cast<T*>(getRawUserData());
     }
 
     template<typename T>
-    void setUserData(T& data) {
+    void setUserData(T & data) {
       setUserData(std::addressof(data));
     }
 
@@ -145,12 +145,12 @@ namespace gfcp {
     void setCollisionPersistence(unsigned persistence);
 
     template<typename T>
-    T& getUserData() {
+    T & getUserData() {
       return *static_cast<T*>(getRawUserData());
     }
 
     template<typename T>
-    void setUserData(T& data) {
+    void setUserData(T & data) {
       setUserData(std::addressof(data));
     }
 
@@ -269,12 +269,12 @@ namespace gfcp {
     gf::Vector2f getRotation() const;
 
     template<typename T>
-    T& getUserData() {
+    T & getUserData() {
       return *static_cast<T*>(getRawUserData());
     }
 
     template<typename T>
-    void setUserData(T& data) {
+    void setUserData(T & data) {
       setUserData(std::addressof(data));
     }
 
@@ -368,12 +368,12 @@ namespace gfcp {
     void setSurfaceVelocity(gf::Vector2f velocity);
 
     template<typename T>
-    T& getUserData() {
+    T & getUserData() {
       return *static_cast<T*>(getRawUserData());
     }
 
     template<typename T>
-    void setUserData(T& data) {
+    void setUserData(T & data) {
       setUserData(std::addressof(data));
     }
 
@@ -457,12 +457,12 @@ namespace gfcp {
     // TODO: pre-solve and post-solve
 
     template<typename T>
-    T& getUserData() {
+    T & getUserData() {
       return *static_cast<T*>(getRawUserData());
     }
 
     template<typename T>
-    void setUserData(T& data) {
+    void setUserData(T & data) {
       setUserData(std::addressof(data));
     }
 
