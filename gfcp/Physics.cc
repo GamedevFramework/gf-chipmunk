@@ -5,6 +5,29 @@
 #include <gf/Color.h>
 
 namespace gfcp {
+  float computeMomentForCircle(float m, float r1, float r2, gf::Vector2f offset) {
+    return cpMomentForCircle(m, r1, r2, cpv(offset.x, offset.y));
+  }
+
+  float computeMomentForSegment(float m, gf::Vector2f a, gf::Vector2f b, float radius) {
+    return cpMomentForSegment(m, cpv(a.x, a.y), cpv(b.x, b.y), radius);
+  }
+
+  float computeMomentForPoly(float m, gf::Span<const gf::Vector2f> verts, gf::Vector2f offset, float radius) {
+    std::vector<cpVect> transformed;
+
+    for (auto v : verts) {
+      transformed.emplace_back(cpv(v.x, v.y));
+    }
+
+    return cpMomentForPoly(m, static_cast<int>(transformed.size()), transformed.data(), cpv(offset.x, offset.y), radius);
+  }
+
+  float computeMomentForBox(float m, gf::RectF box) {
+    return cpMomentForBox2(m, cpBBNew(box.min.x, box.min.y, box.max.x, box.max.y));
+  }
+
+
   /*
    * Arbiter
    */

@@ -22,6 +22,11 @@ namespace gfcp {
   class Shape;
   class Space;
 
+  float computeMomentForCircle(float m, float r1, float r2, gf::Vector2f offset);
+  float computeMomentForSegment(float m, gf::Vector2f a, gf::Vector2f b, float radius);
+  float computeMomentForPoly(float m, gf::Span<const gf::Vector2f> verts, gf::Vector2f offset, float radius);
+  float computeMomentForBox(float m, gf::RectF box);
+
   class Arbiter {
   public:
     Arbiter(cpArbiter * obj)
